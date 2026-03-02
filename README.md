@@ -17,79 +17,90 @@ A full-stack real-time tracking app with:
 │   ├── package.json
 │   ├── render.yaml
 │   └── src/
-│       ├── config/env.js
-│       ├── routes/
-│       │   ├── drivers.js
-│       │   └── health.js
-│       ├── sockets/driverSocket.js
-│       ├── store/driverStore.js
-│       └── server.js
 ├── frontend/
 │   ├── .env.example
-│   ├── index.html
 │   ├── package.json
 │   ├── vercel.json
-│   ├── vite.config.js
 │   └── src/
-│       ├── components/DriverMap.jsx
-│       ├── App.jsx
-│       ├── main.jsx
-│       └── styles.css
+├── scripts/
+│   └── start-local.sh
 ├── package.json
 └── render.yaml
 ```
 
-## Environment variables
+## Prerequisites
+- Node.js **18+**
+- npm
+- Google Maps API key for frontend map rendering
 
-### Backend (`backend/.env`)
+## Quick start (recommended)
+
+```bash
+npm run start:local
+```
+
+This command runs `scripts/start-local.sh`, which:
+1. Validates Node.js version
+2. Creates `backend/.env` and `frontend/.env` from examples (if missing)
+3. Installs dependencies
+4. Starts backend and frontend dev servers together
+
+## Manual run
+
+### 1) Install dependencies
+```bash
+npm install
+```
+
+### 2) Configure env files
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+### 3) Set env values
+Backend (`backend/.env`):
 - `NODE_ENV=development`
 - `PORT=4000`
 - `CLIENT_URL=http://localhost:5173`
-- `CORS_ORIGINS=http://localhost:5173` (comma-separated origins)
+- `CORS_ORIGINS=http://localhost:5173`
 
-### Frontend (`frontend/.env`)
+Frontend (`frontend/.env`):
 - `VITE_API_URL=http://localhost:4000`
-- `VITE_GOOGLE_MAPS_API_KEY=<key>`
+- `VITE_GOOGLE_MAPS_API_KEY=<your_key>`
 - `VITE_DRIVER_ID=driver-001`
 - `VITE_SIMULATE_DRIVER=true`
 
-## Run locally
-
+### 4) Start services (two terminals)
+Terminal A:
 ```bash
-npm install
 npm run dev:backend
+```
+
+Terminal B:
+```bash
 npm run dev:frontend
 ```
 
-## Realtime flow
-1. Client connects to Socket.io.
-2. Backend emits `driver:location:snapshot` with all currently known drivers.
-3. Every 3 seconds, frontend simulates movement and emits `driver:location:update`.
-4. Backend updates in-memory store and broadcasts updated driver payload to all connected clients.
-5. Frontend updates live markers on Google Maps.
+## Verify backend is running
+```bash
+curl http://localhost:4000/api/health
+```
 
 ## API endpoints
 - `GET /api/health`
 - `GET /api/drivers`
 - `GET /api/drivers/:driverId`
 
-## Deploy on GitHub + hosting
+## Common run issue
+If `npm install` fails with `403 Forbidden` to npm registry, your network/proxy/security policy is blocking package downloads. Fix npm registry/proxy access, then rerun installation.
 
-### 1) Push to GitHub
-```bash
-git remote add origin <your-github-repo-url>
-git push -u origin main
-```
+## Deploy
+### Render (backend)
+- Connect repo in Render
+- Use root `render.yaml` or `backend/render.yaml`
+- Set `CLIENT_URL` and `CORS_ORIGINS`
 
-### 2) Deploy backend on Render
-- Connect GitHub repository in Render.
-- Use root `render.yaml` (or `backend/render.yaml`).
-- Set `CLIENT_URL` to frontend production URL.
-- Set `CORS_ORIGINS` to allowed frontend origins.
-
-### 3) Deploy frontend on Vercel
-- Import same GitHub repository into Vercel.
-- Set project root to `frontend`.
-- Framework preset: Vite.
-- Env vars: `VITE_API_URL`, `VITE_GOOGLE_MAPS_API_KEY`, `VITE_DRIVER_ID`, `VITE_SIMULATE_DRIVER`.
-
+### Vercel (frontend)
+- Import repo in Vercel, set root to `frontend`
+- Configure env vars: `VITE_API_URL`, `VITE_GOOGLE_MAPS_API_KEY`, `VITE_DRIVER_ID`, `VITE_SIMULATE_DRIVER`
