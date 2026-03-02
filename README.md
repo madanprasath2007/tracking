@@ -8,51 +8,53 @@ A full-stack real-time tracking app with:
 - Env-based configuration
 - Deployment configuration for **Render** (backend) and **Vercel** (frontend)
 
-## Production-ready structure
-
-```bash
-.
-├── backend/
-│   ├── .env.example
-│   ├── package.json
-│   ├── render.yaml
-│   └── src/
-├── frontend/
-│   ├── .env.example
-│   ├── package.json
-│   ├── vercel.json
-│   └── src/
-├── scripts/
-│   └── start-local.sh
-├── package.json
-└── render.yaml
-```
-
 ## Prerequisites
 - Node.js **18+**
 - npm
 - Google Maps API key for frontend map rendering
 
-## Quick start (recommended)
+## Important: run commands from project folder
+Your PowerShell error shows you ran commands in `C:\Users\MADAN UDHAYA`, where this project does not exist.
 
+First, clone or open this repo folder, then run commands **inside that folder**:
+
+```powershell
+git clone <your-repo-url>
+cd <repo-folder>
+```
+
+Verify:
+```powershell
+dir package.json
+```
+
+If that file is not listed, you are still in the wrong directory.
+
+## Quick start (Linux/macOS)
 ```bash
 npm run start:local
 ```
 
-This command runs `scripts/start-local.sh`, which:
-1. Validates Node.js version
-2. Creates `backend/.env` and `frontend/.env` from examples (if missing)
-3. Installs dependencies
-4. Starts backend and frontend dev servers together
+## Quick start (Windows PowerShell)
+```powershell
+npm run start:local:win
+```
 
-## Manual run
+## Manual run (all platforms)
 
 ### 1) Install dependencies
 ```bash
 npm install
 ```
 
-### 2) Configure env files
+### 2) Create env files
+**PowerShell:**
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.example frontend/.env
+```
+
+**bash:**
 ```bash
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
@@ -92,8 +94,10 @@ curl http://localhost:4000/api/health
 - `GET /api/drivers`
 - `GET /api/drivers/:driverId`
 
-## Common run issue
-If `npm install` fails with `403 Forbidden` to npm registry, your network/proxy/security policy is blocking package downloads. Fix npm registry/proxy access, then rerun installation.
+## Common issues
+- **`ENOENT ... package.json`**: You are not in the repo root. `cd` into the folder containing `package.json`.
+- **`Cannot find path backend/.env.example`**: Same root-cause; wrong current directory.
+- **`npm install` 403 Forbidden**: npm registry/proxy/network policy is blocking downloads.
 
 ## Deploy
 ### Render (backend)
