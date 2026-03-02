@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: uber-tracker-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 4000
+      - key: CLIENT_URL
+        sync: false
